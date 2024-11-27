@@ -148,7 +148,7 @@ def evaluate_model(model, dataset):
 
 if __name__ == "__main__":
     mlflow.autolog()
-    mlflow.set_tracking_uri('http://127.0.0.1:5005')
+    mlflow.set_tracking_uri('http://127.0.0.1:5000')
     mlflow.set_experiment('IMDB_Model_Training')
     
     dataset, label2id = prepare_data()
