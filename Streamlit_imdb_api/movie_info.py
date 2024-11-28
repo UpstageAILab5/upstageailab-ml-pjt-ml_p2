@@ -22,7 +22,7 @@ rating_filter = st.slider('IMDB평점', min_value=0.0, max_value=10.0, step=0.1,
 if movie_title:
     # OMDb API 요청 URL 설정
     omdb_api_url = f'http://www.omdbapi.com/'
-    api_key = st.secrets['http://www.omdbapi.com/?i=tt3896198&apikey=8d8b1a2d']
+    api_key = st.secrets['api_key']
 
     # OMDb API 요청 파라미터 설정
     search_params = {
