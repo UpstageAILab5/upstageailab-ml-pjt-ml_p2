@@ -239,7 +239,7 @@ def slack_notification(evaluation_result, model_path, dataset_path):
 • Training Duration: {evaluation_result['eval_runtime']:.2f} seconds
 • Samples Per Second: {evaluation_result['eval_runtime'] / evaluation_result['predict_accuracy']:.2f}
     """
-    slack_webhook_url = 'https://hooks.slack.com/services/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'
+    slack_webhook_url = '**'
     payload = {
         'text': message
     }
