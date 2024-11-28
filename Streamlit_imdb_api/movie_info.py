@@ -4,8 +4,6 @@ import requests
 import plotly.express as px
 from datetime import datetime
 
-# OMDb API 키 설정
-omdb_api_key = '***'
 
 # 스트림릿 페이지 설정
 st.title('IMDB Movie Info') 
