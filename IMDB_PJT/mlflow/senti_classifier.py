@@ -13,21 +13,24 @@ from transformers import AutoModelForSequenceClassification
 
 ############################ [테스트 전 확인] ###################################
 # 모델 PKL 저장합니다. 이미 저장된 경우 필요없으면 False로 설정 
-SAVE_PKL = True
+# SAVE_PKL = True
+SAVE_PKL = False
 
 # 모델 PKL 로드 : train된 model 폴더를 사용해서 한 번이라도 PKL이 저장된 경우 True
-LOAD_FROM_PKL = False
+# LOAD_FROM_PKL = False
+LOAD_FROM_PKL = True
 
 # 모델 이름은 최종 학습한 모델 폴더로 설정 (폴더 naming rule 적용 필요)
 # MODEL_NAME 이름을 기준으로 [[ 모델 / PKL ]] 이름 및 경로를 지정합니다.
-MODEL_NAME = 'tinybert_model_test'
+# MODEL_NAME = 'tinybert_model_test'
+# MODEL_NAME = 'train_dir'
+MODEL_NAME = 'albert_lemmi'
 ###################################################################################
 
 # 모델 경로
 MODLE_PATH = f'../airflow/models/{MODEL_NAME}'
 PKL_PATH = f'{MODLE_PATH}_model.pkl'
 PKL_TOKENIZER_PATH = f'{MODLE_PATH}_tokenizer'
-
 
 # 디바이스 설정 (CPU/GPU)
 DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -72,7 +75,7 @@ def analyze_sentiment(text):
 if __name__ == "__main__":    
     
     # 분석할 텍스트
-    text = "This movie was plain and boring."
+    text = "재밌어"
     
     try:
         # 모델 로드
@@ -83,12 +86,14 @@ if __name__ == "__main__":
         result = analyze_sentiment(text)
 
         # mlflow 로그
-        # with mlflow.start_run() as run:
-        #     mlflow.log_param("model_name", MODEL_NAME)
-        #     mlflow.log_metric("text", text)
-        #     mlflow.log_metric("sentiment", result[0]['label'])
-        #     mlflow.log_metric("confidence", result[0]['score'])
-        #     print(f"Model {MODEL_NAME} logged in mlflow")      
+        with mlflow.start_run() as run:
+            mlflow.log_param("MODEL_NAME", MODEL_NAME)
+            mlflow.log_param("MODLE_PATH", MODLE_PATH)
+            mlflow.log_metric("text", text)
+            mlflow.log_metric("sentiment", result[0]['label'])
+            mlflow.log_metric("confidence", result[0]['score'])
+           
+            # print(f"Model {MODEL_NAME} logged in mlflow")      
        
         
         print(f"\nText: {text}")
