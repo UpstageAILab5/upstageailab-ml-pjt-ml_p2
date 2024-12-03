@@ -9,8 +9,12 @@ from review_crawling import (                       # 미리 만들은 크롤링
     MEGABOX_MOVIE_CODES
 )
 
+
+###################### 페이지 설정 ######################
+# 사이드바 설정 (여기에 def 페이지 함수를 추가하세요)
+# 그리고 각 페이지 아래에 기능을 추가하고 싶으면 'def crawling_page()' 를 참고하세요
 st.sidebar.title("Contents")
-page = st.sidebar.radio("원하시는 페이지를 선택하세요", ["홈", "소개", "크롤링"])
+page = st.sidebar.radio("원하시는 페이지를 선택하세요", ["홈", "소개", "크롤링"])  # 추가한 페이지에 맞게 수정
 
 def home_page():
     st.title("2조 오뚝이")
@@ -23,8 +27,17 @@ def about_page():
 def crawling_page():
     st.title("크롤링")
     st.write("이 페이지는 영화 리뷰를 크롤링하는 페이지입니다!")
-    streamlit_movie_search()
+    streamlit_movie_search()                                            # 아래에 정의한 기능 추가 
 
+def sentiment_analysis_page():
+    st.title("감성 분석")
+    st.write("이 페이지는 영화 리뷰를 감성 분석하는 페이지입니다!")
+
+
+###################### 추가할 기능 설정 ######################
+# 추가할 기능을 함수로 설정하세요 
+
+# 크롤링 기능 설정
 def streamlit_movie_search():
     st.title("영화 리뷰 크롤링")
     if st.checkbox("CGV 리뷰 크롤링"):  
@@ -89,19 +102,31 @@ def streamlit_movie_search():
             else:
                 st.warning("영화를 먼저 선택하세요!")
 
+# 분류 기능 설정
+def sentiment_analysis_page():
+    st.title("감성 분석")
+    st.write("이 페이지는 영화 리뷰를 감성 분석하는 페이지입니다!")
+
+
+# 페이지 추가 시 함께 수정해주세요 
 if page == "홈":
     home_page()
 elif page == "소개":
     about_page()
 elif page == "크롤링":
     crawling_page()
-
+elif page == "감성 분석":
+    sentiment_analysis_page()
 
 
 if __name__ == "__main__":
+
+    pass
+
+
+
     # st.write("페이지를 선택하세요")
     # home_page()
     # about_page()
     # crawling_page()
     # # streamlit_movie_search() 
-    pass
