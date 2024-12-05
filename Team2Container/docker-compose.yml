@@ -1,0 +1,113 @@
+services:
+  mlflow:
+    image: mlflow-image
+    build: ./mlflow
+    ports:
+      - "5001:5000"
+    environment:
+      - MLFLOW_TRACKING_URI=sqlite:////mlflow/mlflow.db
+    volumes:
+      - mlflow-artifacts:/mlflow/artifacts
+      - mlflow-data:/mlflow
+    networks:
+      - app-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  airflow:
+    image: airflow-image
+    deploy:
+      resources:
+        limits:
+          cpus: "6"
+          memory: "6g"
+        reservations:
+          cpus: "4"
+          memory: "4g"
+    build: ./airflow
+    ports:
+      - "${AIRFLOW_PORT}:8080"
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    volumes:
+      - "./airflow/dags:/usr/local/airflow/dags"
+      - "./airflow/dags/data:/usr/local/airflow/data"
+      - airflow-data:/airflow
+    depends_on:
+      - mlflow
+    command: >
+      bash -c "airflow webserver --port 8080 & airflow scheduler"
+    networks:
+      - app-network
+
+  streamlit:
+    image: streamlit-image
+    build: ./streamlit
+    ports:
+      - "${STREAMLIT_SERVER_PORT}:8501"
+    environment:
+      - SECRETS_PATH=/.streamlit/secrets.toml
+      - CONFIG_PATH=/.streamlit/config.toml
+    volumes:
+      - ./streamlit:/app
+    networks:
+      - app-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  fastapi:
+    image: fastapi-image
+    build: ./fastapi
+    environment:
+      - HOST=0.0.0.0
+    ports:
+      - "${FASTAPI_PORT}:8000"
+    networks:
+      - app-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  nginx:
+    build: ./nginx
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/usr/share/nginx
+      - ./nginx/html:/usr/share/nginx/html
+      - ./nginx/html/images:/usr/share/nginx/html/images
+    depends_on:
+      - mlflow
+      - airflow
+      - streamlit
+      - fastapi
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mlflow-artifacts:
+  mlflow-data:
+  airflow-data:
