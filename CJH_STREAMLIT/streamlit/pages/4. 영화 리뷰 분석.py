@@ -101,16 +101,67 @@ def analyze_sentiment(reviews_df, model_path="kobert_konply"):
         st.error(f"감성 분석 중 오류 발생: {e}")
     return reviews_df
 
-def generate_prompt_from_review(review_text, sentiment):
-    """Generate an appropriate prompt based on review content and sentiment"""
-    base_prompt = f"Create a cinematic movie poster based on the following review: {review_text}"
-    
-    if sentiment == "긍정":
-        style_prompt = "Use bright, vibrant colors and uplifting imagery with dramatic lighting"
+def generate_cgv_prompt(reviews_df, movie_data):
+    # 감성 분석 결과 가져오기
+    if 'sentiment' in reviews_df.columns:
+        positive_reviews = reviews_df[reviews_df['sentiment'] == '긍정']['review'].tolist()
+        negative_reviews = reviews_df[reviews_df['sentiment'] == '부정']['review'].tolist()
     else:
-        style_prompt = "Use dark, moody colors and dramatic shadows with tense atmosphere"
-    
-    return f"{base_prompt}. {style_prompt}. Make it in professional movie poster style with high quality rendering."
+        st.warning("감성 분석을 먼저 실행해주세요.")
+        return None
+
+    # 영화 정보 가져오기
+    title = movie_data.get('Title', '')
+    director = movie_data.get('Directors', '')
+    cast = movie_data.get('Cast', '')
+    plot = movie_data.get('Plot', '')
+
+    # 긍정적, 부정적 감성 모으기
+    positive_summary = ' '.join(positive_reviews[:3]) if positive_reviews else ''
+    negative_summary = ' '.join(negative_reviews[:3]) if negative_reviews else ''
+
+    # 감성 비율 계산
+    total_reviews = len(reviews_df)
+    positive_ratio = len(positive_reviews) / total_reviews if total_reviews > 0 else 0
+
+    # 전체 분위기 결정
+    if positive_ratio >= 0.7:
+        tone = "밝고 희망적인"
+    elif positive_ratio <= 0.3:
+        tone = "어둡고 긴장감 있는"
+    else:
+        tone = "대비되는 명암이 강한"
+
+    # 프롬프트 생성
+    prompt = f"""
+영화 포스터 생성을 위한 프롬프트:
+
+제목: {title}
+톤앤매너: {tone} 분위기의 영화 포스터
+
+핵심 요소:
+- 줄거리: {plot}
+- 주요 배우: {cast}
+- 감독: {director}
+
+시각적 스타일:
+- 수채화 느낌의 모던한 아트워크
+- 선명한 이미지와 깔끔한 구도
+- 텍스트나 글자 제외
+- 영화의 핵심 장면이나 감정을 상징적으로 표현
+
+관객 반응 반영:
+긍정적 요소: {positive_summary[:200]}...
+부정적 요소: {negative_summary[:200]}...
+
+추가 지침:
+- 전문적인 영화 포스터 스타일 유지
+- 고품질 렌더링
+- 감성 분석 결과가 {positive_ratio:.0%} 긍정적임을 고려한 톤 설정
+- 1000자 미만으로 프롬프트 작성
+"""
+
+    return prompt
 
 if 'cgv_reviews' not in st.session_state:
     st.session_state['cgv_reviews'] = None
@@ -163,6 +214,8 @@ def streamlit_movie_search():
                     cgv_detail = CGVDetailCrawler()
                     cgv_movie_data = cgv_detail.crawl_movie_details(st.session_state.selected_movie, review_limit=cgv_review_limit)
                     if cgv_movie_data:
+                        st.session_state.cgv_movie_data = cgv_movie_data
+
                         st.write('### 영화 정보')
                         st.write(f'**제목:** {cgv_movie_data["Title"]}')
                         st.write(f'**감독:** {cgv_movie_data["Directors"]}')
@@ -376,6 +429,33 @@ def streamlit_movie_search():
                         update_mode="MODEL_CHANGED",
                         fit_columns_on_grid_load=True,
                     )
+
+            st.markdown("### 🎨 프롬프트 생성")
+            if st.button("프롬프트 생성", key="cgv_prompt_button"):
+                if 'sentiment' not in st.session_state.cgv_reviews.columns:
+                    st.warning("먼저 감성 분석을 실행해주세요!")
+                elif not hasattr(st.session_state, 'cgv_movie_data'):
+                    st.warning("영화 정보를 먼저 가져와주세요!")
+                else:
+                    with st.spinner("프롬프트 생성 중..."):
+                        generated_prompt = generate_cgv_prompt(
+                            st.session_state.cgv_reviews,
+                            st.session_state.cgv_movie_data  # Use movie data from session state
+                        )
+                        if generated_prompt:
+                            st.success("프롬프트 생성 완료!")
+                            st.text_area("생성된 프롬프트:", value=generated_prompt, height=400)
+                            
+                            # Add copy button
+                            st.download_button(
+                                label="프롬프트 텍스트 파일로 다운로드",
+                                data=generated_prompt,
+                                file_name="movie_poster_prompt.txt",
+                                mime="text/plain"
+                            )
+
+
+
 
 if __name__ == "__main__":
     streamlit_movie_search()
