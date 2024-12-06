@@ -66,19 +66,50 @@
 - 그 아래에 airflow, fastAPI, MLflow, nginx, streamlit 컨테이너가 동작할 수 있는 환경으로 구축했습습니다.
 
 e.g.
+
 Team2Container
-├── code
-│   ├── jupyter_notebooks
-│   │   └── model_train.ipynb
-│   └── train.py
-├── docs
-│   ├── pdf
-│   │   └── (Template) [패스트캠퍼스] Upstage AI Lab 1기_그룹 스터디 .pptx
-│   └── paper
-└── input
-    └── data
-        ├── eval
-        └── train
+├── airflow
+│   └── dags
+│   │   └── data
+│   │        └── rating.txt
+│   │   ├── cgv_model_predict.py
+│   │   ├── cgv_review_crawling.py
+│   │   ├── crawling.py
+│   │   ├── megabox_model_predict.py
+│   │   ├── megabox_review_crawling.py
+│   │   ├── model_train.py
+│   │   └── s3.py
+│   └── Dockerfile
+│   └── airflow.cfg
+│
+├── fastapi
+│   ├── app
+│   │    └── __init__.py
+│   │    └── app.py
+│   │    └── main.py
+│   └── Dockerfile
+│
+└── mlflow
+│    └── Dockerfile
+│
+└── nginx
+│    └── html
+│          └── images
+│                 └── 1.png
+│          └── index.html
+│    └── Dockerfile
+│    └── nginx.conf
+│       
+└── streamlit
+│       
+└── base.Dockerfile
+│       
+└── docker-compose.yml
+│       
+└── requirements.txt
+
+
+
 ```
 
 ## 3. Data descrption
