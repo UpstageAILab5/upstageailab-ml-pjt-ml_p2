@@ -20,7 +20,6 @@
 - 지금까지 배운 내용을 토대로, MLflow, Airflow를 활용한 모델 개발 및 모니터링 가능한 환경을 구축
 
 ### Timeline
-
 - 2024. 11. 25 : Start Date
 - ~2024. 11. 27 : 모델 개발 및 전체적인 MLops 아키텍처flow 도면 작성
 - ~2024. 11. 29 : 1차 Streamlit을 활용하여 리뷰의 긍/부정 여부를 확인할 수 있다. Docker Container를 활용하여 각 앱을 컨테이너 단위로 구성하고 연결. - Streamlit, nginx, mlflow, airflow
