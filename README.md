@@ -32,7 +32,8 @@
 
 - 각 기능을 도커의 컨테이너 기능을 활용해 Build-up.
 - Base.Dockerfile에 각 앱에 필요한 언어,라이브러리,모듈 등을 담아서 base.dodckerfile 이미지의 버전을 토대로 앱 동작.
-- 그 아래에 airflow, fastAPI, MLflow, nginx, streamlit 이미지의 컨테이너가 동작할 수 있는 환경으로 구축.
+- 그 이후 docker compose build 기능을 활용해 모든 컨테이너( airflow, fastAPI, MLflow, nginx, streamlit )들을 구동시켰습니다.
+- 작동 확인 이후 모델은 aws s3에, 도커는 ec2에 업로드하였습니다.
 
 e.g.
 ```
