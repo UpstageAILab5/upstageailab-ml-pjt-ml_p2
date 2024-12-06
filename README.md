@@ -22,9 +22,9 @@
 ### Timeline
 - 2024-11-25 : Start Date
 - ~2024. 11. 27 : 모델 개발 및 전체적인 MLops 아키텍처flow 도면 작성
-- ~2024. 11. 29 : 1차 Streamlit을 활용하여 리뷰의 긍/부정 여부를 확인할 수 있다. Docker Container를 활용하여 각 앱을 컨테이너 단위로 구성하고 연결. - Streamlit, nginx, mlflow, airflow
-- ~2024. 12. 04 : 2차 Streamlit에서 추가 기능으로, openAI API의 영화 프롬프트를 활용하여 이미지를 만들 수 있고, 영화 내 나의 MBTI와 매칭하는 캐릭터를 찾아볼 수 있다.
-- ~2024. 12. 06 : Dodcker 및 개발 환경을 AWS EC2 & S3에 업로드하여 외부 user들과 interactive한 환경 구축. Final submission deadline
+- ~2024. 11. 29 : 1차 Streamlit을 활용하여 리뷰의 긍/부정 여부를 확인할 수 있다. 크롤링->mlflow->airflow 흐름 테스트. Docker Container를 활용하여 각 앱을 컨테이너 단위로 구성하고 연결. - Streamlit, nginx, mlflow, airflow
+- ~2024. 12. 04 : 2차 Streamlit에서 추가 기능으로, openAI API의 영화 프롬프트를 활용하여 이미지를 만들 수 있고, 영화 내 나의 MBTI와 매칭하는 캐릭터를 찾아볼 수 있다. AWS에 도커 연결 및 각 기능의 작동여부 테스트.
+- ~2024. 12. 06 : Dodcker 및 개발 환경을 AWS EC2 & S3에 업로드하여 외부 user들과 interactive한 환경 구축. Final submission deadline.
 
 ## 2. Components
 
