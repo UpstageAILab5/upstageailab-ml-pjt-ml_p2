@@ -15,6 +15,8 @@ RUN apt-get update && apt-get install -y \
     libnss3 \
     fonts-liberation \
     libgconf-2-4 \
+    libfreetype6-dev \
+    libpng-dev \
     && wget https://github.com/mozilla/geckodriver/releases/download/v0.32.2/geckodriver-v0.32.2-linux-aarch64.tar.gz \
     && tar -xvzf geckodriver-v0.32.2-linux-aarch64.tar.gz \
     && mv geckodriver /usr/local/bin/ \

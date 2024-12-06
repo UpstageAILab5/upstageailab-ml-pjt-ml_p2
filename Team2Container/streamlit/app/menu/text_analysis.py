@@ -1,185 +1,140 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
 import os
-from library.senti_classifier_kobert import predict_sentiment
-from st_aggrid import AgGrid, GridOptionsBuilder
+
+import plotly.express as px
+from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode, DataReturnMode
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+from library.kobert_classifier1 import predict_sentiment
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "../kobert_konply")
+FONT_PATH = 'AppleGothic'  # Define font path as a constant
+
+def analyze_sentiment_text(input_text, model_path):
+    try:
+        sentiment = predict_sentiment(input_text, model_path)
+        confidence_str = sentiment['confidence'].replace('%', '')
+        confidence = float(confidence_str)
+        probabilities = sentiment['probabilities']
+        formatted_probabilities = ', '.join([f"{key}: {value}" for key, value in probabilities.items()])
+        
+
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown("### 분석 결과")
+            st.markdown(f"**입력 텍스트:**\n{input_text}")
+            st.markdown(f"**감성 결과:** {sentiment['sentiment']}")
+        with col2:
+            st.markdown("### 상세 정보")
+            st.markdown(f"**신뢰도:** {confidence:.2f}")
+            st.markdown(f"**확률 분포:** {formatted_probabilities}")
+        st.balloons()
+    except Exception as e:
+        st.error(f"분석 중 오류가 발생했습니다: {str(e)}")
+
+def analyze_sentiment_file(uploaded_file, model_path):
+    try:
+        df = pd.read_csv(uploaded_file)
+        
+        progress_bar = st.progress(0)
+        total_rows = len(df)
+        
+        results = []
+        for index, row in df.iterrows():
+            sentiment_result = predict_sentiment(row['review'], model_path)
+            results.append(sentiment_result)
+            progress_bar.progress((index + 1) / total_rows)
+        
+        df["sentiment_analysis"] = results
+        df["sentiment"] = df["sentiment_analysis"].apply(lambda x: x["sentiment"])
+        df["confidence"] = df["sentiment_analysis"].apply(lambda x: x["confidence"])
+        
+        st.subheader("📊 데이터 테이블")
+        gb = GridOptionsBuilder.from_dataframe(df)
+        gb.configure_pagination(paginationAutoPageSize=True)
+        gb.configure_side_bar()
+        gb.configure_default_column(
+            groupable=True,
+            value=True,
+            enableRowGroup=True,
+            editable=False,
+            filterable=True
+        )
+        gb.configure_column("confidence", type=["numericColumn"], precision=2)
+        
+        grid_response = AgGrid(
+            df,
+            gridOptions=gb.build(),
+            height=300,
+            theme="balham",
+            data_return_mode=DataReturnMode.FILTERED_AND_SORTED,
+            update_mode=GridUpdateMode.MODEL_CHANGED,
+            fit_columns_on_grid_load=True,
+            allow_unsafe_jscode=True
+        )
+        
+
+        st.subheader("📈 감성 분석 분포")
+        with st.container(border=True):
+            sentiment_counts = df["sentiment"].value_counts()
+            fig = px.pie(values=sentiment_counts.values, 
+                        names=sentiment_counts.index, 
+                        title='감성 분석 결과 분포')
+            st.plotly_chart(fig, use_container_width=True)
+        
+        st.subheader("🔤 워드클라우드")
+        create_wordcloud(df['review'])
+            
+        return df
+    except Exception as e:
+        st.error(f"감성 분석 중 오류 발생: {str(e)}")
+        return None
+
+def create_wordcloud(text_data):
+    with st.container(border=True):
+        try:
+            wordcloud = WordCloud(
+                font_path=FONT_PATH,
+                width=800,
+                height=400,
+                background_color='white',
+                max_words=100
+            ).generate(' '.join(text_data))
+            
+            plt.figure(figsize=(10, 5))
+            plt.imshow(wordcloud, interpolation='bilinear')
+            plt.axis('off')
+            st.pyplot(plt)
+        except Exception as e:
+            st.error(f"워드클라우드 생성 중 오류 발생: {str(e)}")
 
 def text_analysis_view():
-    # 파일 경로 설정 (절대 경로)
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    model_path = os.path.join(BASE_DIR, "../kobert_konply")
+    st.markdown("""
+    # 텍스트 분석 도구 ✒️
+    입력된 텍스트의 감정, 주제, 키워드를 AI가 자동으로 분석합니다.
+    워드클라우드와 차트로 텍스트의 특징을 시각화하여 보여드립니다.
+    """)
 
-    # Custom CSS for styling
-    st.markdown(
-        """
-        <style>
-            /* Background and font */
-            html, body, [data-testid="stAppViewContainer"] {
-                background-color: #1C1C1E;
-                color: #F0F0F0;
-                font-family: 'Arial', sans-serif;
-            }
-
-            /* Title and subheader styles */
-            h1 {
-                color: #FF416C;
-                text-align: center;
-                margin-bottom: 10px;
-            }
-            h2, h3 {
-                color: #FFFFFF;
-                margin-top: 20px;
-            }
-
-            /* Input box styling */
-            textarea {
-                background-color: #2C2C2E;
-                color: #FFFFFF;
-                border: 1px solid #555;
-                border-radius: 10px;
-            }
-
-            /* Buttons */
-            div.stButton > button {
-                background: linear-gradient(90deg, #ff4b2b, #ff416c);
-                color: white;
-                font-size: 16px;
-                padding: 10px 20px;
-                border: none;
-                border-radius: 20px;
-                cursor: pointer;
-                transition: all 0.3s ease-in-out;
-                box-shadow: 0 4px 10px rgba(255, 65, 108, 0.3);
-            }
-            div.stButton > button:hover {
-                background: linear-gradient(90deg, #ff416c, #ff4b2b);
-                transform: scale(1.05);
-            }
-
-            /* Uploaded file box */
-            div[data-testid="stFileUploader"] {
-                background-color: #2C2C2E;
-                border: 1px dashed #FF416C;
-                border-radius: 10px;
-            }
-
-            /* Dataframe styling */
-            div[data-testid="stDataFrameContainer"] {
-                background-color: #2C2C2E;
-                border-radius: 10px;
-                color: #F0F0F0;
-            }
-
-            /* Chart title */
-            .plotly-container .main-svg {
-                fill: #FFFFFF;
-            }
-            .metric-box {
-                background-color: #2C2C2E;
-                padding: 10px;
-                border-radius: 10px;
-                text-align: center;
-            }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
-
-
-
-    # Page Title
-    st.title("🎉 감성 분석 페이지")
-    st.subheader("입력하신 리뷰의 감성을 분석해 드립니다.")
-
-    # Input Section
-    st.markdown("---")
-    st.subheader("📋 분석할 리뷰 입력")
-    user_input = st.text_area("분석할 텍스트를 입력하세요:", height=150)
-
-    if st.button("감성 분석"):
-        if user_input.strip():
-            with st.spinner("분석 중..."):
-                try:
-                    sentiment = predict_sentiment(user_input, model_path)
-                    st.markdown(f"**입력 텍스트:** {user_input}")
-                    st.markdown(f"**감성 결과:** {sentiment['sentiment']}")
-                    st.markdown(f"**신뢰도:** {sentiment['confidence']}")
-                    st.markdown(f"**확률 분포:** {sentiment['probabilities']}")
-                    st.balloons()
-                except Exception as e:
-                    st.error(f"분석 중 오류가 발생했습니다: {e}")
-        else:
-            st.warning("분석할 텍스트를 입력하세요.")
-
-
-    # File Upload Section
-    st.markdown("---")
-    st.subheader("📂 첨부한 리뷰 파일 분석")
-    uploaded_file = st.file_uploader("CSV 파일 업로드 (리뷰가 포함된 파일)", type="csv")
-
-    if uploaded_file:
-        try:
-            df = pd.read_csv(uploaded_file)
-            st.success("파일 업로드 성공!")
-            st.dataframe(df.head(), use_container_width=True)
-            st.write("사용 가능한 열:", df.columns.tolist())
-
-            # Select column for sentiment analysis
-            selected_column = st.selectbox("분석할 열 선택", df.columns)
-        
-            # Perform Sentiment Analysis
-            # df["sentiment_score"] = df[selected_column].apply(lambda x: predict_sentiment(x, MODEL_PATH))
-
-            if st.button("분석 시작"):
+    tab1, tab2 = st.tabs(["텍스트 입력", "파일 업로드"])
+    
+    with tab1:
+        user_input = st.text_area("분석할 텍스트를 입력하세요:", height=150)
+        if st.button("텍스트 분석", key="analyze_text"):
+            if user_input.strip():
                 with st.spinner("분석 중..."):
-                    df[selected_column] = df[selected_column].fillna("Unknown").astype(str)
-                    df["analysis"] = df[selected_column].apply(lambda x: predict_sentiment(x, MODEL_PATH))
-                    df["sentiment"] = df["analysis"].apply(lambda x: x['sentiment'])
-                    df["confidence"] = df["analysis"].apply(lambda x: x['confidence'])
+                    analyze_sentiment_text(user_input, MODEL_PATH)
+            else:
+                st.warning("텍스트를 입력해주세요.")
+    
+    with tab2:
+        uploaded_file = st.file_uploader("CSV 파일 업로드 (리뷰가 포함된 파일)", type="csv")
+        if st.button("파일 분석", key="analyze_file"):
+            if uploaded_file is not None:
+                with st.spinner("파일 분석 중..."):
+                    df = analyze_sentiment_file(uploaded_file, MODEL_PATH)
+            else:
+                st.warning("CSV 파일을 업로드해주세요.")
 
-                    # Display summary
-                    st.success("분석 완료!")
-                    sentiment_counts = df["sentiment"].value_counts()
-                    col1, col2 = st.columns(2)
-                    with col1:
-                        st.metric("긍정 리뷰", f"{sentiment_counts.get('긍정', 0)}개")
-                    with col2:
-                        st.metric("부정 리뷰", f"{sentiment_counts.get('부정', 0)}개")
-
-                    # Display histogram of confidence scores
-                    st.subheader("📊 감성 신뢰도 분포")
-                    fig = px.histogram(
-                        df,
-                        x="confidence",
-                        color="sentiment",
-                        title="감성 신뢰도 분포",
-                        labels={"confidence": "Confidence", "sentiment": "Sentiment"},
-                        color_discrete_map={"긍정": "#28A745", "부정": "#FF073A"}
-                    )
-                    st.plotly_chart(fig, use_container_width=True)
-
-                    st.subheader("📋 분석 결과")
-                    gb = GridOptionsBuilder.from_dataframe(df)
-                    gb.configure_pagination(paginationAutoPageSize=True)  # Enable pagination
-                    gb.configure_default_column(
-                        groupable=True,
-                        value=True,
-                        enableRowGroup=True,
-                        editable=False,
-                        filterable=True,
-                    )
-                    gb.configure_column("confidence", type=["numericColumn"], precision=2)
-                    grid_options = gb.build()
-
-                    AgGrid(
-                        df,
-                        gridOptions=grid_options,
-                        height=300,
-                        theme="balham",  # "light", "dark", "blue", "fresh", "material"
-                        update_mode="MODEL_CHANGED",
-                        fit_columns_on_grid_load=True,
-                    )
-
-        except Exception as e:
-            st.error(f"파일 처리 중 오류가 발생했습니다: {e}")
+    print("text_analysis_view")

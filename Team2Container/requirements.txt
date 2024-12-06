@@ -28,3 +28,6 @@ git+https://github.com/SKTBrain/KoBERT.git#egg=kobert_tokenizer&subdirectory=kob
 SentencePiece
 selenium
 plotly
+wordcloud
+pillow
+openai

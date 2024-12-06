@@ -4,6 +4,7 @@ import logging
 import os
 from io import BytesIO
 from PIL import Image
+import pandas as pd
 
 class s3_client:
     def __init__(self, access_key, secret_access_key):
@@ -73,3 +74,50 @@ class s3_client:
             return image_list
         else:
             print("파일이 존재하지 않습니다.")
+    def get_csv(self, bucket_path: str, object_name: str = None) -> pd.DataFrame:
+        """S3 버킷에서 CSV 파일을 다운로드하여 pandas DataFrame으로 반환합니다.
+        
+        :param bucket_path: 버킷 내 CSV 파일의 경로
+        :param object_name: CSV 파일의 이름
+        :return: pandas DataFrame
+        """
+        try:
+            # 전체 경로 생성
+            full_path = bucket_path + object_name if object_name else bucket_path
+            
+            # S3에서 CSV 파일 읽기
+            response = self.s3.get_object(Bucket=self.BUCKET, Key=full_path)
+            
+            # CSV 내용을 pandas DataFrame으로 변환
+            df = pd.read_csv(BytesIO(response['Body'].read()))
+            
+            return df
+            
+        except ClientError as e:
+            logging.error(f"Error downloading CSV file: {e}")
+            return pd.DataFrame()  # 에러 발생 시 빈 DataFrame 반환
+        except Exception as e:
+            logging.error(f"Unexpected error: {e}")
+            return pd.DataFrame()  # 에러 발생 시 빈 DataFrame 반환
+        
+    def get_cinema_csv(self, cinema_type: str, file_name: str) -> pd.DataFrame:
+        """특정 영화관의 CSV 파일을 S3에서 다운로드하여 pandas DataFrame으로 반환합니다.
+        
+        :param cinema_type: 영화관 종류 (예: 'cgv', 'megabox')
+        :param file_name: CSV 파일명 (예: 'reviews.csv')
+        :return: pandas DataFrame
+        """
+        try:
+            # S3 경로 생성 (fastcampus/cinema/[cinema_type]/[file_name])
+            bucket_path = f'cinema/{cinema_type}/'
+            
+            # get_csv 메서드 호출하여 파일 가져오기
+            df = self.get_csv(bucket_path=bucket_path, object_name=file_name)
+            
+            return df
+            
+        except Exception as e:
+            logging.error(f"영화관 CSV 파일 가져오기 중 오류 발생: {e}")
+            return pd.DataFrame()  # 에러 발생 시 빈 DataFrame 반환
+        
+        
