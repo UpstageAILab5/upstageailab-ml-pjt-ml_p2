@@ -8,9 +8,7 @@
 
 ## 0. Overview
 ### Environment
-- Windows 개발환경 : 김남섭,김현진,박지은
-- Mac 개발환경 : 최진호, 송주은
-- AWS 자원활용 : EC2, S3
+- [환경 설정 페이지](https://github.com/UpstageAILab5/upstageailab-ml-pjt-ml_p2/blob/main/Team2Container/README.txt)
 
 ### Requirements
 - tensorflow==2.18.0
