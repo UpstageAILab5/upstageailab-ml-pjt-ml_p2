@@ -11,37 +11,36 @@
 - Windows 개발환경 : 김남섭,김현진,박지은
 - Mac 개발환경 : 최진호, 송주은
 - AWS 자원활용 : EC2, S3
-- 그 외 Linux : Docker, Container
 
 ### Requirements
-tensorflow==2.18.0
-torch==2.5.1
-numpy==2.0.2
-pandas==2.2.3
-scikit-learn
-accelerate==1.1.1
-datasets==3.1.0
-Flask==3.1.0
-huggingface-hub==0.26.2
-keras==3.6.0
-transformers==4.46.3
-evaluate==0.4.3
-boto3==1.35.69
-botocore==1.35.69
-joblib==1.4.2
-jsonschema==4.23.0
-jsonschema-specifications==2024.10.1
-matplotlib==3.9.2
-matplotlib-inline==0.1.7
-scipy==1.13.1
-seaborn==0.13.2
-tf_keras==2.18.0
-tokenizers==0.20.3
-JPype1
-konlpy
-mlflow
-git+https://github.com/SKTBrain/KoBERT.git#egg=kobert_tokenizer&subdirectory=kobert_hf
-SentencePiece
+- tensorflow==2.18.0
+- torch==2.5.1
+- numpy==2.0.2
+- pandas==2.2.3
+- scikit-learn
+- accelerate==1.1.1
+- datasets==3.1.0
+- Flask==3.1.0
+- huggingface-hub==0.26.2
+- keras==3.6.0
+- transformers==4.46.3
+- evaluate==0.4.3
+- boto3==1.35.69
+- botocore==1.35.69
+- joblib==1.4.2
+- jsonschema==4.23.0
+- jsonschema-specifications==2024.10.1
+- matplotlib==3.9.2
+- matplotlib-inline==0.1.7
+- scipy==1.13.1
+- seaborn==0.13.2
+- tf_keras==2.18.0
+- tokenizers==0.20.3
+- JPype1
+- konlpy
+- mlflow
+- git+https://github.com/SKTBrain/KoBERT.git#egg=kobert_tokenizer&subdirectory=kobert_hf
+- SentencePiece
 
 ## 1. Competiton Info
 
@@ -53,17 +52,21 @@ SentencePiece
 
 - 2024. 11. 25 - Start Date
 - ~2024. 11. 27 - 모델 개발 및 전체적인 MLops 아키텍처flow 도면 작성
-- ~2024. 11. 29 - 
+- ~2024. 11. 29 - 1차 Streamlit을 활용하여 리뷰의 긍/부정 여부를 확인할 수 있다. Docker Container를 활용하여 각 앱을 컨테이너 단위로 구성하고 연결. - Streamlit, nginx, mlflow, airflow
+- ~2024. 12. 04 - 2차 Streamlit에서 추가 기능으로, openAI API의 영화 프롬프트를 활용하여 이미지를 만들 수 있고, 영화 내 나의 MBTI와 매칭하는 캐릭터를 찾아볼 수 있다.
+- ~2024. 12. 06 - Dodcker 및 개발 환경을 AWS EC2 & S3에 업로드하여 외부 user들과 interactive한 환경 구축.
 - 2024. 12. 06 - Final submission deadline
 
 ## 2. Components
 
 ### Directory
 
-- _Insert your directory structure_
+- 각 기능을 도커의 컨테이너 기능을 활용해 Build-up 했습니다.
+- Base.Dockerfile을 통하여 모든 이미지에 필요한 모듈과 라이브러리르 설치하고
+- 그 아래에 airflow, fastAPI, MLflow, nginx, streamlit 컨테이너가 동작할 수 있는 환경으로 구축했습습니다.
 
 e.g.
-```
+Team2Container
 ├── code
 │   ├── jupyter_notebooks
 │   │   └── model_train.ipynb
