@@ -3,7 +3,7 @@
 
 | ![박패캠](https://avatars.githubusercontent.com/u/156163982?v=4) | ![이패캠](https://avatars.githubusercontent.com/u/156163982?v=4) | ![최패캠](https://avatars.githubusercontent.com/u/156163982?v=4) | ![김패캠](https://avatars.githubusercontent.com/u/156163982?v=4) | ![오패캠](https://avatars.githubusercontent.com/u/156163982?v=4) |
 | :--------------------------------------------------------------: | :--------------------------------------------------------------: | :--------------------------------------------------------------: | :--------------------------------------------------------------: | :--------------------------------------------------------------: |
-|            [최진호](https://github.com/UpstageAILab)             |            [송주은](https://github.com/UpstageAILab)             |            [김남섭](https://github.com/UpstageAILab)             |            [김현진](https://github.com/UpstageAILab)             |            [박지은](https://github.com/UpstageAILab)                |
+|            [최진호](https://github.com/lojino)             |            [송주은](https://github.com/jsonghcbiz)             |            [김남섭](https://github.com/PotatoKim1)             |            [김현진](https://github.com/jinibizsite)             |            [박지은](https://github.com/FULLMOOONBY)                |
 |                            팀장, Airflow, EC2, S3, 도커 및 총괄 담당                             |                            모델 실험, Streamlit, Docker                             |                            Docker, Container                             |                            Docker, Container, 모델실험                             |                            가상환경, Streamlit                             |
 
 ## 0. Overview
