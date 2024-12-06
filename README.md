@@ -37,7 +37,7 @@
 - 그 아래에 airflow, fastAPI, MLflow, nginx, streamlit 컨테이너가 동작할 수 있는 환경으로 구축했습습니다.
 
 e.g.
-
+```
 Team2Container
 ├── airflow
 │   ├── dags
