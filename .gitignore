@@ -866,3 +866,8 @@ FodyWeavers.xsd
 # Additional files built by Visual Studio
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,windows,python,visualstudiocode,visualstudio,jupyternotebooks,flask,venv,virtualenv,pycharm
+
+kobert_konply/
+airflow.db
+webserver_config.py
+airflow-webserver.pid

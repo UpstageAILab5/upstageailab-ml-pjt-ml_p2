@@ -51,7 +51,7 @@ buttons = []
 # 메인 페이지 시작
 
 # 메뉴 옵션 정의
-menu_options = ["🏠 홈", "📝 텍스트 분석", "🎞️ 영화 리뷰 분석"]
+menu_options = ["홈", "텍스트 분석", "영화 리뷰 분석"]
 tab1, tab2, tab3 = st.tabs(menu_options)
 
 # 현재 선택된 메뉴에 따라 콘텐츠 표시

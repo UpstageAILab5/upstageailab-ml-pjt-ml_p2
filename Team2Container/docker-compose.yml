@@ -27,24 +27,26 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "6"
-          memory: "6g"
+          cpus: "3"
+          memory: "12g"
         reservations:
-          cpus: "4"
-          memory: "4g"
+          cpus: "2"
+          memory: "6g"
     build: ./airflow
     ports:
       - "${AIRFLOW_PORT}:8080"
     environment:
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__WEBSERVER__BASE_URL=http://3.36.5.184/airflow
     volumes:
+      # - "./airflow:/usr/local/airflow"
       - "./airflow/dags:/usr/local/airflow/dags"
       - "./airflow/dags/data:/usr/local/airflow/data"
       - airflow-data:/airflow
     depends_on:
       - mlflow
     command: >
-      bash -c "airflow webserver --port 8080 & airflow scheduler"
+      bash -c "airflow db init && airflow webserver --port 8080 & airflow scheduler"
     networks:
       - app-network
 
