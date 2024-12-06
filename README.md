@@ -30,9 +30,9 @@
 
 ### Directory
 
-- 각 기능을 도커의 컨테이너 기능을 활용해 Build-up 했습니다.
-- Base.Dockerfile에 각 앱에 필요한 언어,라이브러리,모듈 등을 담아서 base.dodckerfile 이미지의 버전을 토대로 앱들이 동작합니다.
-- 그 아래에 airflow, fastAPI, MLflow, nginx, streamlit 이미지의 컨테이너가 동작할 수 있는 환경으로 구축했습니다.
+- 각 기능을 도커의 컨테이너 기능을 활용해 Build-up.
+- Base.Dockerfile에 각 앱에 필요한 언어,라이브러리,모듈 등을 담아서 base.dodckerfile 이미지의 버전을 토대로 앱 동작.
+- 그 아래에 airflow, fastAPI, MLflow, nginx, streamlit 이미지의 컨테이너가 동작할 수 있는 환경으로 구축.
 
 e.g.
 ```
