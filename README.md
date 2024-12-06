@@ -69,9 +69,9 @@ e.g.
 
 Team2Container
 ├── airflow
-│   └── dags
-│   │   └── data
-│   │        └── rating.txt
+│   ├── dags
+│   │   ├── data
+│   │   │    └── rating.txt
 │   │   ├── cgv_model_predict.py
 │   │   ├── cgv_review_crawling.py
 │   │   ├── crawling.py
@@ -79,13 +79,13 @@ Team2Container
 │   │   ├── megabox_review_crawling.py
 │   │   ├── model_train.py
 │   │   └── s3.py
-│   └── Dockerfile
+│   ├── Dockerfile
 │   └── airflow.cfg
 │
 ├── fastapi
 │   ├── app
-│   │    └── __init__.py
-│   │    └── app.py
+│   │    ├── __init__.py
+│   │    ├── app.py
 │   │    └── main.py
 │   └── Dockerfile
 │
@@ -93,18 +93,34 @@ Team2Container
 │    └── Dockerfile
 │
 └── nginx
-│    └── html
-│          └── images
-│                 └── 1.png
-│          └── index.html
-│    └── Dockerfile
+│    ├── html
+│    │     ├── images
+│    │     │      └── 1.png
+│    │     └── index.html
+│    ├── Dockerfile
 │    └── nginx.conf
 │       
-└── streamlit
+├── streamlit
+│       ├── .streamlit
+│       │       ├── config.toml
+│       │       └── secrets.toml
+│       └── app
+│       │    ├── library
+│       │    │     ├── cgv_crawler.py
+│       │    │     ├── crawling.py
+│       │    │     ├── megabox_crawler.py
+│       │    │     ├── s3.py
+│       │    │     └── senti_classifier_kobert.py
+│       │    ├── menu
+│       │    │     ├── home.py
+│       │    │     ├── movie_review_analysis.py
+│       │    │     └── text_analysis.py
+│       │    └── app.py
+│       └── Dockerfile
+│
+├── base.Dockerfile
 │       
-└── base.Dockerfile
-│       
-└── docker-compose.yml
+├── docker-compose.yml
 │       
 └── requirements.txt
 
