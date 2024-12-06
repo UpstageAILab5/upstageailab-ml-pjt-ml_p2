@@ -8,21 +8,53 @@
 
 ## 0. Overview
 ### Environment
-- _Write Development environment_
+- Windows 개발환경 : 김남섭,김현진,박지은
+- Mac 개발환경 : 최진호, 송주은
+- AWS 자원활용 : EC2, S3
+- 그 외 Linux : Docker, Container
 
 ### Requirements
-- _Write Requirements_
+tensorflow==2.18.0
+torch==2.5.1
+numpy==2.0.2
+pandas==2.2.3
+scikit-learn
+accelerate==1.1.1
+datasets==3.1.0
+Flask==3.1.0
+huggingface-hub==0.26.2
+keras==3.6.0
+transformers==4.46.3
+evaluate==0.4.3
+boto3==1.35.69
+botocore==1.35.69
+joblib==1.4.2
+jsonschema==4.23.0
+jsonschema-specifications==2024.10.1
+matplotlib==3.9.2
+matplotlib-inline==0.1.7
+scipy==1.13.1
+seaborn==0.13.2
+tf_keras==2.18.0
+tokenizers==0.20.3
+JPype1
+konlpy
+mlflow
+git+https://github.com/SKTBrain/KoBERT.git#egg=kobert_tokenizer&subdirectory=kobert_hf
+SentencePiece
 
 ## 1. Competiton Info
 
 ### Overview
 
-- _Write competition information_
+- 지금까지 배운 내용을 토대로, MLops를 활용한 모델 개발 및 모니터링 가능한 환경을 구축
 
 ### Timeline
 
-- ex) January 10, 2024 - Start Date
-- ex) February 10, 2024 - Final submission deadline
+- 2024. 11. 25 - Start Date
+- ~2024. 11. 27 - 모델 개발 및 전체적인 MLops 아키텍처flow 도면 작성
+- ~2024. 11. 29 - 
+- 2024. 12. 06 - Final submission deadline
 
 ## 2. Components
 
